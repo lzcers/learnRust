@@ -1,0 +1,11 @@
+-- Add migration script here
+CREATE TABLE IF NOT EXISTS stock_price (
+  id INTEGER PRIMARY KEY NOT NULL,
+  date TEXT NOT NULL,
+  open NUMERIC NOT NULL,
+  close NUMERIC NOT NULL,
+  high NUMERIC NOT NULL,
+  low NUMERIC NOT NULL,
+  volume NUMERIC NOT NULL,
+  money NUMERIC NOT NULL
+);
