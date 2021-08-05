@@ -1,6 +1,7 @@
 -- Add migration script here
 CREATE TABLE IF NOT EXISTS stock_price (
   id INTEGER PRIMARY KEY NOT NULL,
+  code TEXT NOT NULL,
   date TEXT NOT NULL,
   open NUMERIC NOT NULL,
   close NUMERIC NOT NULL,

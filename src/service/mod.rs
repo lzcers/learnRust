@@ -1,4 +1,4 @@
-use crate::data::{self, JoinQuant, StockPrice};
+use crate::data::{self, JoinQuant, StockParams, StockPrice};
 use reqwest::Error;
 
 pub struct Stock {
@@ -18,7 +18,11 @@ impl Stock {
         Ok(self.data_source.get_query_count().await?)
     }
 
-    pub async fn get_price(&self, code: &str) -> Result<Vec<StockPrice>, Error> {
-        Ok(self.data_source.get_price(code).await?)
+    pub async fn get_price(
+        &self,
+        code: &str,
+        params: Option<StockParams>,
+    ) -> Result<Vec<StockPrice>, Error> {
+        Ok(self.data_source.get_price(code, None).await?)
     }
 }

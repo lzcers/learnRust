@@ -13,18 +13,23 @@ pub struct JoinQuant {
 }
 #[derive(Debug, Deserialize)]
 pub struct StockPrice {
-    date: String,
-    open: f64,
-    close: f64,
-    high: f64,
-    low: f64,
-    volume: f64,
-    money: f64,
+    pub date: String,
+    pub open: f64,
+    pub close: f64,
+    pub high: f64,
+    pub low: f64,
+    pub volume: f64,
+    pub money: f64,
+}
+
+pub struct StockParams {
+    pub count: i32,
+    pub unit: String,
+    pub end_date: String,
 }
 
 impl JoinQuant {
     pub fn new() -> Self {
-        dotenv::dotenv().ok();
         JoinQuant {
             api_url: "https://dataapi.joinquant.com/apis".into(),
             mob: env::var("mob").unwrap(),
@@ -65,18 +70,40 @@ impl JoinQuant {
         Ok(())
     }
 
-    pub async fn get_price(&self, code: &str) -> Result<Vec<StockPrice>, Error> {
-        let res = self
-            .fetch(json!({
-                "method": "get_price",
-                "code": code,
-                "count": 1,
-                "unit": "1m",
-            }))
-            .await?
-            .text()
-            .await?;
-        Ok(utils::parse_csv(res))
+    pub async fn get_price(
+        &self,
+        code: &str,
+        params: Option<StockParams>,
+    ) -> Result<Vec<StockPrice>, Error> {
+        match params {
+            Some(args) => {
+                let res = self
+                    .fetch(json!({
+                        "method": "get_price",
+                        "code": code,
+                        "count": args.count,
+                        "unit": args.unit,
+                        "end_date": args.end_date,
+                    }))
+                    .await?
+                    .text()
+                    .await?;
+                Ok(utils::parse_csv(res))
+            }
+            None => {
+                let res = self
+                    .fetch(json!({
+                        "method": "get_price",
+                        "code": code,
+                        "count": 1,
+                        "unit": "1m",
+                    }))
+                    .await?
+                    .text()
+                    .await?;
+                Ok(utils::parse_csv(res))
+            }
+        }
     }
 
     pub async fn get_query_count(&self) -> Result<u64, Error> {
