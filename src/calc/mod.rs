@@ -12,4 +12,6 @@ pub trait Next<T> {
     fn next(&mut self, input: T) -> Self::Output;
 }
 
-pub mod EMA;
+mod ATR;
+pub mod atr;
+pub mod ema;
