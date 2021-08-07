@@ -3,8 +3,9 @@ mod data;
 mod service;
 use crate::calc::Next;
 use calc::atr::ATR;
-use data::StockParams;
-use std::time::Duration;
+use data::utils::parse_csv_from_file_path;
+use serde::Deserialize;
+use std::{path::Path, time::Duration};
 
 pub async fn create_task() {
     let mut int = tokio::time::interval(Duration::from_millis(500));
@@ -16,18 +17,24 @@ pub async fn create_task() {
     }
 }
 
+#[derive(Debug, Deserialize)]
+struct CSVItem {
+    code: String,
+    date: String,
+    open: f64,
+    close: f64,
+    high: f64,
+    low: f64,
+    volume: f64,
+    money: f64,
+}
+
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
-    let stock_service = service::Stock::new();
-    let list = stock_service
-        .get_price(
-            "000300.XSHG",
-            Some(StockParams {
-                count: 365,
-                unit: "1d".to_string(),
-                end_date: "2021-08-02".to_string(),
-            }),
-        )
-        .await?;
+    dotenv::dotenv().ok();
+    let result = parse_csv_from_file_path::<CSVItem>(Path::new("./300.csv"))?;
+    for item in result {
+        println!("{:?}", &item);
+    }
     Ok(())
 }

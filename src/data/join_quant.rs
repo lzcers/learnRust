@@ -1,9 +1,9 @@
 use super::utils;
+use anyhow::Result;
 use reqwest::{self, Error, Response};
 use serde::Deserialize;
 use serde_json::json;
 use std::{cell::RefCell, env};
-
 pub struct JoinQuant {
     api_url: String,
     mob: String,
@@ -88,7 +88,7 @@ impl JoinQuant {
                     .await?
                     .text()
                     .await?;
-                Ok(utils::parse_csv(res))
+                Ok(utils::parse_csv_from_str(&res))
             }
             None => {
                 let res = self
@@ -101,7 +101,7 @@ impl JoinQuant {
                     .await?
                     .text()
                     .await?;
-                Ok(utils::parse_csv(res))
+                Ok(utils::parse_csv_from_str(&res))
             }
         }
     }

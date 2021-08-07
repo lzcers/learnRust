@@ -23,6 +23,6 @@ impl Stock {
         code: &str,
         params: Option<StockParams>,
     ) -> Result<Vec<StockPrice>, Error> {
-        Ok(self.data_source.get_price(code, None).await?)
+        Ok(self.data_source.get_price(code, params).await?)
     }
 }
