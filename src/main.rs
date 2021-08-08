@@ -1,8 +1,7 @@
 mod calc;
 mod data;
 mod service;
-use crate::calc::Next;
-use calc::atr::ATR;
+use calc::{atr::ATR, ema::EMA, DataItem, Next};
 use data::utils::parse_csv_from_file_path;
 use serde::Deserialize;
 use std::{path::Path, time::Duration};
@@ -32,9 +31,23 @@ struct CSVItem {
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     dotenv::dotenv().ok();
-    let result = parse_csv_from_file_path::<CSVItem>(Path::new("./300.csv"))?;
-    for item in result {
-        println!("{:?}", &item);
+    let list = parse_csv_from_file_path::<CSVItem>(Path::new("./300.csv"))?;
+    let mut atr = ATR::new(14);
+    let mut ema = EMA::new(12);
+    for item in &list[..] {
+        println!(
+            "{} atr14: {} ema12: {}",
+            item.date,
+            atr.next(DataItem {
+                open: item.open,
+                close: item.close,
+                high: item.high,
+                low: item.low,
+                volume: item.volume,
+                money: item.money
+            }),
+            ema.next(item.close),
+        )
     }
     Ok(())
 }
