@@ -14,3 +14,4 @@ pub trait Next<T> {
 
 pub mod atr;
 pub mod ema;
+pub mod ma;

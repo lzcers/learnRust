@@ -1,4 +1,4 @@
-use super::{ema::EMA, DataItem, Next};
+use super::{ma::MA, DataItem, Next};
 
 struct TR {
     prev_close: Option<f64>,
@@ -30,14 +30,14 @@ impl Next<DataItem> for TR {
 
 pub struct ATR {
     tr: TR,
-    ema: EMA,
+    ma: MA,
 }
 
 impl ATR {
     pub fn new(period: usize) -> Self {
         Self {
             tr: TR::new(),
-            ema: EMA::new(period),
+            ma: MA::new(period),
         }
     }
 }
@@ -45,6 +45,6 @@ impl ATR {
 impl Next<DataItem> for ATR {
     type Output = f64;
     fn next(&mut self, input: DataItem) -> Self::Output {
-        self.ema.next(self.tr.next(input))
+        self.ma.next(self.tr.next(input))
     }
 }
